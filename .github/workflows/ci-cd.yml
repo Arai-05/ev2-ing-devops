@@ -40,6 +40,9 @@ jobs:
       - name: Instalar Snyk CLI
         run: npm install -g snyk
 
+      - name: Dar permisos de ejecucion a mvnw
+        run: if [ -f mvnw ]; then chmod +x mvnw; fi
+
       - name: Resolver dependencias Maven (Snyk las necesita descargadas)
         run: mvn -B install -DskipTests
 
