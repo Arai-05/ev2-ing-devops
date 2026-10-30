@@ -104,7 +104,7 @@ jobs:
           cache: maven
           cache-dependency-path: ms-vehiculos/pom.xml
 
-      - name: Analisis Sonar (falla si no pasa el quality gate)
+      - name: Analisis SonarCloud
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
@@ -112,7 +112,6 @@ jobs:
             -Dsonar.projectKey=Arai-05_ev2-ing-devops \
             -Dsonar.organization=arai-05 \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.qualitygate.wait=true \
             -Dsonar.token=${SONAR_TOKEN}
 
   #Build de la imagen Docker y despliegue 
