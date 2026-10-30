@@ -40,8 +40,11 @@ jobs:
       - name: Instalar Snyk CLI
         run: npm install -g snyk
 
+      - name: Resolver dependencias Maven (Snyk las necesita descargadas)
+        run: mvn -B install -DskipTests
+
       - name: Snyk test
-        run: snyk test --severity-threshold=high --file=pom.xml --json-file-output=snyk-report.json
+        run: snyk test --severity-threshold=high --file=pom.xml --json-file-output=snyk-report.json -d
 
       - name: Subir reporte Snyk
         if: always()
