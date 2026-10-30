@@ -1,0 +1,50 @@
+services:
+  db:
+    image: mysql:8.4
+    container_name: vehiculos-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: vehiculos
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    networks:
+      - vehiculos-net
+
+  app:
+    image: ${APP_IMAGE:-ms-vehiculos:local}
+    build:
+      context: ./ms-vehiculos
+    container_name: vehiculos-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://db:3306/vehiculos?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-rootpassword}
+      SERVER_PORT: 9004
+    ports:
+      - "9004:9004"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    networks:
+      - vehiculos-net
+
+volumes:
+  db-data:
+
+networks:
+  vehiculos-net:
